@@ -17,3 +17,16 @@ def initDB(*args, **kwargs):
 def index():
     allclasses = Class.query.order_by(Class.major).all()
     return render_template('index.html', title="Course List", classes=allclasses)
+
+
+
+@app.route('/createclass/', methods=['GET', 'POST'])
+def createclass():
+    form = ClassForm()
+    if form.validate_on_submit():
+        newClass = Class(coursenum= form.coursenum.data, title=form.title.data, major=form.major.data.name)
+        db.session.add(newClass)
+        db.session.commit()
+        flash("Class " + newClass.major + "-" + newClass.coursenum+ " is created" )
+        return redirect(url_for('index'))
+    return render_template('create_class.html',form=form)

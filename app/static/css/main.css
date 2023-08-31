@@ -47,3 +47,18 @@ a:hover{
 	color: white;
 
 }
+
+.textinput{
+	padding: 2px;
+	font-family: "Helvetica Neue",Helvetica,Arial;
+	font-size:18px;
+	width: 400px;
+}
+
+.flash-container{
+	background: #99c5ee;
+	font-family: Tahoma;
+	font-size: 16px;
+	padding:25px;
+	margin: 10px 0px 10px 0px;
+}
