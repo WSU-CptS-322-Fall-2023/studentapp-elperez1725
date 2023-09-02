@@ -53,7 +53,7 @@
                 <p>{{ form.password2.label }}</p>
                 <p>{{ form.password2(class='textinput') }}</p>
 
-                {% for error in form.password.errors %}
+                {% for error in form.password2.errors %}
                 <span style="color: red;">{{ error }}</span>
                 {% endfor %}
 
