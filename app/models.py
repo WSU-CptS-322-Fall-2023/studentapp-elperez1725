@@ -11,11 +11,25 @@ from app import login
 def load_user(id):
     return Student.query.get(int(id))
 
+
+enrolled = db.Table("enrolled",
+        db.Column("studentid", db.Integer, db.ForeignKey("student.id")),
+        db.Column("classid", db.Integer, db.ForeignKey("class.id")),
+
+
+)
+
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     coursenum = db.Column(db.String(3))  
     title = db.Column(db.String(150))
     major = db.Column(db.String, db.ForeignKey("major.name"))
+    
+    roser = db.Relationship(
+        "Student", secondary=enrolled,
+        primaryjoin=(enrolled.c.classid ==id), lazy="dynamic", overlaps="classes")
+        
+    
     def __repr__(self):
         return '<Class id: {} - coursenum: {}, title: {}, major: {}>'.format(self.id,self.coursenum, self.title, self.major)
 
@@ -40,7 +54,10 @@ class Student(UserMixin, db.Model):
     address = db.Column(db.String(200))
     email = db.Column(db.String(120), unique=True, index=True)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-
+    classes = db.relationship(
+        "Class", secondary=enrolled,
+        primaryjoin=(enrolled.c.studentid ==id), lazy="dynamic", overlaps="roster")
+    
     def __repr__(self):
         return '<Student {} - {} {} - {};>'.format(self.id, self.firstname, self.lastname, self.email)
     
@@ -49,3 +66,17 @@ class Student(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def enroll(self, newclass):
+        if not self.is_enrolled(newclass):
+            self.classes.append(newclass)
+
+    def unenroll(self, oldclass):
+        if self.is_enrolled(oldclass):
+            self.classes.append(oldclass)
+
+    def is_enrolled(self, newclass):
+        self.classes.filter(enrolled.c.classid == newclass.id).count() > 0
+
+    def enrolled_courses(self):
+        return self.classes
