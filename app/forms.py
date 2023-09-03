@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, PasswordField, BooleanField
-from wtforms.validators import  ValidationError, Length, DataRequired, EqualTo
+from wtforms.validators import  ValidationError, Length, DataRequired, Email, EqualTo
 from wtforms_sqlalchemy.fields import QuerySelectField
 from app.models import Class, Major, Student
+from flask_login import current_user
 
 
 def get_major():
@@ -44,3 +45,20 @@ class LoginForm(FlaskForm):
     password = StringField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me', validators=[DataRequired()])
     submit = SubmitField("Sign In")
+
+
+class EditForm(FlaskForm):
+    firstname = StringField('First Name', validators=[DataRequired()])
+    lastname = StringField('Last Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    address = TextAreaField('Address', [Length(min=0, max=200)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField("Submit")
+
+
+    def validate_email(self, email):
+        students = Student.query.filter_by(email = email.data).all()
+        for student in students:
+            if (student.id != current_user.id):
+                raise ValidationError("The email associated with another account! Please use a different email")
