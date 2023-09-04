@@ -48,6 +48,23 @@ a:hover{
 
 }
 
+
+
+.ebutton{
+	width:80px;
+	font-size: 18px;
+	margin: 10px 0px 0px 0px;
+	padding: 5px;
+	border: 1px solid gray;
+	background-color:#99c5ee;
+}
+
+.ebutton:hover{
+	background-color: green;
+	color: white;
+
+}
+
 .textinput{
 	padding: 2px;
 	font-family: "Helvetica Neue",Helvetica,Arial;

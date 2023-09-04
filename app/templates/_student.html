@@ -4,7 +4,7 @@
         <td width="20%">{{student.firstname}} {{student.lastname}} </td>
         <td width="20%">{{student.email}}</td>
         <td width="20%">{{student.address}}</td>
-        <td width="20%">{{student.last_seen}}</td>
+        <td width="20%">{{moment(date).format('LLL')}}</td>
     </tr>
 </thead>
 </table>

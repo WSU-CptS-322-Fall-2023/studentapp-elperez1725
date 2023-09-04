@@ -1,6 +1,8 @@
 
 
 from app import db
+
+from app.models import Student, Class, enrolled
 #create the database file, if it doesn't exist. 
 db.create_all()
 
