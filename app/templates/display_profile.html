@@ -6,12 +6,13 @@
     <p><b>Name:</b> {{student.firstname}} {{student.lastname}}</p>
     <p><b>Email:</b> {{student.email}}</p>
     <p><b>Address:</b> {%if student.address %} {{student.address}} {% else %} No address {% endif %}</p>
-    <p><b>Last seen on:</b> {{student.last_seen}}</p>
+    <p><b>Last seen on:</b> {{moment(date).format('LLL') }}</p>
     
 
     {%% if student.enrolledCourses() %}
         <p><b>Enrolled Classes:</b></p>
-        {% for class in student.enrolledCourses() %}
+        {% for enrollment in student.enrolledCourses() %}
+            {% set class = enrollment.classenrolled %}
             {% incluide '_class.html' %}
         {% endfor %}
     {% endif %}

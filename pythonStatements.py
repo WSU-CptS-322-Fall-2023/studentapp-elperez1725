@@ -3,7 +3,7 @@
 from app import db
 
 from app.models import Student, Class, enrolled
-#create the database file, if it doesn't exist. 
+from datetime import datetime
 db.create_all()
 
 

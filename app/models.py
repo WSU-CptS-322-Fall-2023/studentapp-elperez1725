@@ -12,12 +12,6 @@ def load_user(id):
     return Student.query.get(int(id))
 
 
-enrolled = db.Table("enrolled",
-        db.Column("studentid", db.Integer, db.ForeignKey("student.id")),
-        db.Column("classid", db.Integer, db.ForeignKey("class.id")),
-
-
-)
 
 class Class(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,11 +19,7 @@ class Class(db.Model):
     title = db.Column(db.String(150))
     major = db.Column(db.String, db.ForeignKey("major.name"))
     
-    roser = db.Relationship(
-        "Student", secondary=enrolled,
-        primaryjoin=(enrolled.c.classid ==id), lazy="dynamic", overlaps="classes")
-        
-    
+    roster = db.relationship("Enrolled", backref = "classenrolled")
     def __repr__(self):
         return '<Class id: {} - coursenum: {}, title: {}, major: {}>'.format(self.id,self.coursenum, self.title, self.major)
 
@@ -54,9 +44,7 @@ class Student(UserMixin, db.Model):
     address = db.Column(db.String(200))
     email = db.Column(db.String(120), unique=True, index=True)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    classes = db.relationship(
-        "Class", secondary=enrolled,
-        primaryjoin=(enrolled.c.studentid ==id), lazy="dynamic", overlaps="roster")
+    classes = db.relationship("Enrolled", backref = "studentenrolled")
     
     def __repr__(self):
         return '<Student {} - {} {} - {};>'.format(self.id, self.firstname, self.lastname, self.email)
@@ -64,19 +52,49 @@ class Student(UserMixin, db.Model):
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+
     def enroll(self, newclass):
         if not self.is_enrolled(newclass):
-            self.classes.append(newclass)
+            newEnrollment = Enrolled(classenrolled = newclass)
+            self.classes.append(newEnrollment)
+            
+
 
     def unenroll(self, oldclass):
+
         if self.is_enrolled(oldclass):
-            self.classes.append(oldclass)
+            curEnrollment = Enrolled.query.filter_by(studentid=self.id).filter_by(classid=oldclass.id).first()
+            db.session.delete()
+            db.session.delete(curEnrollment)
+            db.session.commit()
+
 
     def is_enrolled(self, newclass):
-        self.classes.filter(enrolled.c.classid == newclass.id).count() > 0
+        return (Enrolled.query.filter_by(studentid=self.id).filter_by(classid=newclass.id).count() > 0)
+
 
     def enrolled_courses(self):
         return self.classes
+    
+    def getEnrollmentDate(self, theclass):
+        if self.is_enrolled(theclass):
+            return Enrolled.query.filter_by(studentid=self.id).filter_by(classid=theclass.id).first().enrolldate
+        else:
+            return None
+    
+
+class Enrolled(db.Model):
+    studentid = db.Column(db.Integer, db.ForeignKey("student.id"), primary_key = True)
+    classid = db.Column(db.Integer, db.ForeignKey("class.id"), primary_key = True)
+    enrolleddate = db.Column(db.DateTime, default=datetime.utcnow)
+    studentenrolled = db.relationship("Student")
+    classenrolled = db.relationship("Class")
+    
+    
+    def __repr__(self):
+        return '<Enrolled class: {}, student: {}, date: {}>'.format(self.classenrolled, self.studentenrolled, self.enrolleddate)
+    

@@ -12,7 +12,7 @@
                 {{ eform.hidden_tag() }}
                 {{eform.submit(value='Unenroll', class='button')}}
                </form>
-
+                    Enrolled on: {{moment(current_user.getEnrollmentDate(class)).format("LL")}}
                {% endif %}
             </td>
             <td witdh="20%">
