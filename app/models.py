@@ -30,7 +30,7 @@ class Major(db.Model):
     name = db.Column(db.String(), primary_key=True)
     department = db.Column(db.String(150))
     classes = db.relationship("Class", backref="coursemajor", lazy="dynamic")
-
+    studentsinmajor = db.relationship("StudentMajor", back_populates="_major")
     def __repr__(self):
         return "<Major name: {} - department: {}>".format(self.name, self.department)
 
@@ -45,7 +45,7 @@ class Student(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, index=True)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     classes = db.relationship("Enrolled", backref = "studentenrolled")
-    
+    majorsofstudent = db.relationship("StudentMajor", back_populates="_student")
     def __repr__(self):
         return '<Student {} - {} {} - {};>'.format(self.id, self.firstname, self.lastname, self.email)
     
@@ -97,4 +97,15 @@ class Enrolled(db.Model):
     
     def __repr__(self):
         return '<Enrolled class: {}, student: {}, date: {}>'.format(self.classenrolled, self.studentenrolled, self.enrolleddate)
+    
+
+class StudentMajor(db.Model):
+    studentmajor = db.Column(db.String(20), db.ForeignKey("major.name"), primary_key = True)
+    studentid = db.Column(db.Integer, db.ForeignKey("student.id"), primary_key=True)
+    startdate = db.Column(db.DateTime)
+    primary = db.Column(db.Boolean)
+    _student = db.relationship("Student")
+    _major = db.relationship("Major")
+    def __repr__(self):
+        return "<StudentMajor ({},{},{},{})>".format(self.studentmajor, self.studentid, self.startdate, self.primary)
     
