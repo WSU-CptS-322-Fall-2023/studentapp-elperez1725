@@ -91,8 +91,8 @@ class Enrolled(db.Model):
     studentid = db.Column(db.Integer, db.ForeignKey("student.id"), primary_key = True)
     classid = db.Column(db.Integer, db.ForeignKey("class.id"), primary_key = True)
     enrolleddate = db.Column(db.DateTime, default=datetime.utcnow)
-    studentenrolled = db.relationship("Student")
-    classenrolled = db.relationship("Class")
+  
+    
     
     
     def __repr__(self):
