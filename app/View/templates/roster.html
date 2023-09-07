@@ -2,7 +2,7 @@
 
 {% block app_content %}
 <h1>{{current_class.major}} - {{current_class.coursenum}} - {{current_class.title}}</h1>
-<table class="coursetable">
+<table class="table table-hover">
     <thead>
         <tr valign="bottom">
         <td width="20%">Name </td>
@@ -18,6 +18,6 @@
     {% include '_student.html' %}
 {% endfor %}
 
-<a href="{{url_for('index')}}" class="button">Return to main page</a>
+<a href="{{url_for('routes.index')}}" class="button">Return to main page</a>
 
 {% endblock %}
